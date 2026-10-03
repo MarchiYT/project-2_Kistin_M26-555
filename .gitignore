@@ -1,0 +1,10 @@
+.venv/
+.python-version
+__pycache__/
+*.pyc
+*.egg-info/
+.ruff_cache/
+dist/
+data/
+db_meta.json
+*.tmp
