@@ -1,4 +1,5 @@
 import prompt
+from prettytable import PrettyTable
 
 from primitive_db import core, utils
 from primitive_db.constants import COMMAND_PROMPT, HELP_LINES, METADATA_FILE
@@ -35,6 +36,24 @@ def execute_command(text):
         utils.save_metadata(METADATA_FILE, metadata)
         columns = ", ".join(f"{key}:{value}" for key, value in metadata[name].items())
         print(f'Таблица "{name}" успешно создана со столбцами: {columns}')
+
+    elif action == "insert":
+        name = command["table_name"]
+        data = core.insert(metadata, name, command["values"])
+        utils.save_table_data(name, data)
+        print(f'Запись с ID={data[-1]["ID"]} успешно добавлена в таблицу "{name}".')
+    elif action == "select":
+        name = command["table_name"]
+        schema = core.get_schema(metadata, name)
+        where = command["where_clause"]
+        if where is not None:
+            core.validate_values(schema, where)
+        data = core.select(utils.load_table_data(name), where)
+        table = PrettyTable()
+        table.field_names = list(schema)
+        for row in data:
+            table.add_row([row[column] for column in schema])
+        print(table)
     elif action == "drop_table":
         name = command["table_name"]
         core.drop_table(metadata, name)
