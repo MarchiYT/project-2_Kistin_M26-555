@@ -78,3 +78,22 @@ def matches(row, where_clause):
 def select(table_data, where_clause=None):
     """Возвращает подходящие записи."""
     return [row.copy() for row in table_data if matches(row, where_clause)]
+
+
+
+def update(table_data, set_clause, where_clause):
+    """Меняет поля записей, подходящих под условие."""
+    if ID_COLUMN in set_clause:
+        raise ValueError("Изменять ID нельзя.")
+    result = []
+    for row in table_data:
+        updated_row = row.copy()
+        if matches(row, where_clause):
+            updated_row.update(set_clause)
+        result.append(updated_row)
+    return result
+
+
+def delete(table_data, where_clause):
+    """Возвращает записи, оставшиеся после удаления."""
+    return [row.copy() for row in table_data if not matches(row, where_clause)]
