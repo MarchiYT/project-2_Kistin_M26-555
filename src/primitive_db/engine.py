@@ -3,6 +3,7 @@ from prettytable import PrettyTable
 
 from primitive_db import core, utils
 from primitive_db.constants import COMMAND_PROMPT, HELP_LINES, ID_COLUMN, METADATA_FILE
+from primitive_db.decorators import handle_db_errors
 from primitive_db.parser import parse_command
 
 
@@ -22,6 +23,7 @@ def print_table(schema, data):
     print(table)
 
 
+@handle_db_errors
 def execute_command(text):
     """Выполняет одну команду."""
     command = parse_command(text)
@@ -43,6 +45,8 @@ def execute_command(text):
     name = command["table_name"]
     if action == "create_table":
         result = core.create_table(metadata, name, command["columns"])
+        if result is None:
+            return False
         utils.save_table_data(name, [])
         utils.save_metadata(METADATA_FILE, result)
         columns = ", ".join(f"{key}:{value}" for key, value in result[name].items())
@@ -51,12 +55,16 @@ def execute_command(text):
     schema = core.get_schema(metadata, name)
     if action == "drop_table":
         result = core.drop_table(metadata, name)
+        if result is None:
+            return False
         utils.delete_table_data(name)
         utils.save_metadata(METADATA_FILE, result)
         print(f'Таблица "{name}" успешно удалена.')
         return True
     if action == "insert":
         data = core.insert(metadata, name, command["values"])
+        if data is None:
+            return False
         utils.save_table_data(name, data)
         print(f'Запись с ID={data[-1][ID_COLUMN]} успешно добавлена в таблицу "{name}".')
         return True
@@ -71,7 +79,9 @@ def execute_command(text):
     if where is not None:
         core.validate_values(schema, where)
     if action == "select":
-        print_table(schema, core.select(data, where))
+        result = core.select(data, where)
+        if result is not None:
+            print_table(schema, result)
         return False
     set_clause = command.get("set_clause")
     if set_clause is not None:
@@ -86,6 +96,8 @@ def execute_command(text):
         result = core.update(data, set_clause, where)
     else:
         result = core.delete(data, where)
+    if result is None:
+        return False
     utils.save_table_data(name, result)
     for row_id in changed_ids:
         if action == "update":
@@ -106,5 +118,3 @@ def run():
         except (EOFError, KeyboardInterrupt):
             print("\nРабота завершена.")
             break
-        except (ValueError, OSError) as error:
-            print(error)

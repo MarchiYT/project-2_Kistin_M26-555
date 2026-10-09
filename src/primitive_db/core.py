@@ -1,5 +1,6 @@
 from primitive_db import utils
 from primitive_db.constants import COLUMN_TYPES, ID_COLUMN
+from primitive_db.decorators import confirm_action, handle_db_errors, log_time
 from primitive_db.parser import validate_name
 
 
@@ -18,6 +19,7 @@ def get_schema(metadata, table_name):
     return schema
 
 
+@handle_db_errors
 def create_table(metadata, table_name, columns):
     """Добавляет новую таблицу в метаданные."""
     validate_name(table_name)
@@ -35,6 +37,8 @@ def create_table(metadata, table_name, columns):
     return metadata
 
 
+@handle_db_errors
+@confirm_action("удаление таблицы")
 def drop_table(metadata, table_name):
     """Удаляет таблицу из метаданных."""
     get_schema(metadata, table_name)
@@ -52,6 +56,8 @@ def validate_values(schema, values):
             raise ValueError(f"Некорректное значение: {value}. Попробуйте снова.")
 
 
+@handle_db_errors
+@log_time
 def insert(metadata, table_name, values):
     """Добавляет запись с новым ID."""
     schema = get_schema(metadata, table_name)
@@ -75,12 +81,15 @@ def matches(row, where_clause):
     )
 
 
+@handle_db_errors
+@log_time
 def select(table_data, where_clause=None):
     """Возвращает подходящие записи."""
     return [row.copy() for row in table_data if matches(row, where_clause)]
 
 
 
+@handle_db_errors
 def update(table_data, set_clause, where_clause):
     """Меняет поля записей, подходящих под условие."""
     if ID_COLUMN in set_clause:
@@ -94,6 +103,8 @@ def update(table_data, set_clause, where_clause):
     return result
 
 
+@handle_db_errors
+@confirm_action("удаление записей")
 def delete(table_data, where_clause):
     """Возвращает записи, оставшиеся после удаления."""
     return [row.copy() for row in table_data if not matches(row, where_clause)]
