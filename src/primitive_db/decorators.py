@@ -53,3 +53,16 @@ def log_time(func):
     wrapper.__name__ = func.__name__
     wrapper.__doc__ = func.__doc__
     return wrapper
+
+
+
+def create_cacher():
+    """Создаёт функцию для хранения результатов запросов."""
+    cache = {}
+
+    def cache_result(key, value_func):
+        if key not in cache:
+            cache[key] = value_func()
+        return cache[key]
+
+    return cache_result

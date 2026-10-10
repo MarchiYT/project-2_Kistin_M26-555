@@ -1,9 +1,11 @@
+import json
+
 import prompt
 from prettytable import PrettyTable
 
 from primitive_db import core, utils
 from primitive_db.constants import COMMAND_PROMPT, HELP_LINES, ID_COLUMN, METADATA_FILE
-from primitive_db.decorators import handle_db_errors
+from primitive_db.decorators import create_cacher, handle_db_errors
 from primitive_db.parser import parse_command
 
 
@@ -24,7 +26,7 @@ def print_table(schema, data):
 
 
 @handle_db_errors
-def execute_command(text):
+def execute_command(text, cache_result):
     """Выполняет одну команду."""
     command = parse_command(text)
     if command is None:
@@ -79,7 +81,8 @@ def execute_command(text):
     if where is not None:
         core.validate_values(schema, where)
     if action == "select":
-        result = core.select(data, where)
+        key = (name, json.dumps(where, sort_keys=True))
+        result = cache_result(key, lambda: core.select(data, where))
         if result is not None:
             print_table(schema, result)
         return False
@@ -110,11 +113,15 @@ def execute_command(text):
 def run():
     """Запускает цикл ввода команд."""
     print_help()
+    cache_result = create_cacher()
     while True:
         try:
             text = prompt.string(COMMAND_PROMPT, empty=True)
-            if execute_command(text) == "exit":
+            result = execute_command(text, cache_result)
+            if result == "exit":
                 break
+            if result is True:
+                cache_result = create_cacher()
         except (EOFError, KeyboardInterrupt):
             print("\nРабота завершена.")
             break
