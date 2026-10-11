@@ -87,7 +87,7 @@ def parse_assignments(tokens):
         raise ValueError("Некорректное условие.")
     result = {}
     for index in range(0, len(tokens), 4):
-        name, sign, value = tokens[index:index + 3]
+        name, sign, value = tokens[index : index + 3]
         validate_name(name)
         if sign != "=" or name in result:
             raise ValueError("Некорректное условие.")
@@ -167,8 +167,16 @@ def parse_command(text):
                 "where_clause": parse_where(tokens[4:]),
             }
     known_commands = (
-        "create_table", "drop_table", "list_tables", "insert", "select",
-        "update", "delete", "info", "help", "exit",
+        "create_table",
+        "drop_table",
+        "list_tables",
+        "insert",
+        "select",
+        "update",
+        "delete",
+        "info",
+        "help",
+        "exit",
     )
     if action in known_commands:
         raise ValueError(f"Некорректное значение: {text}. Попробуйте снова.")

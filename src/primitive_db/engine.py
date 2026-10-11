@@ -68,9 +68,11 @@ def execute_command(text, cache_result):
         if data is None:
             return False
         utils.save_table_data(name, data)
-        print(f'Запись с ID={data[-1][ID_COLUMN]} успешно добавлена в таблицу "{name}".')
+        row_id = data[-1][ID_COLUMN]
+        print(f'Запись с ID={row_id} успешно добавлена в таблицу "{name}".')
         return True
     data = utils.load_table_data(name)
+    core.validate_table_data(schema, data)
     if action == "info":
         columns = ", ".join(f"{key}:{value}" for key, value in schema.items())
         print(f"Таблица: {name}")
@@ -117,6 +119,8 @@ def run():
     while True:
         try:
             text = prompt.string(COMMAND_PROMPT, empty=True)
+            if text is None:
+                continue
             result = execute_command(text, cache_result)
             if result == "exit":
                 break

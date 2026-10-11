@@ -46,7 +46,6 @@ def drop_table(metadata, table_name):
     return metadata
 
 
-
 def validate_values(schema, values):
     """Проверяет столбцы и типы значений."""
     for column, value in values.items():
@@ -63,10 +62,13 @@ def insert(metadata, table_name, values):
     schema = get_schema(metadata, table_name)
     columns = [name for name in schema if name != ID_COLUMN]
     if len(values) != len(columns):
-        raise ValueError(f"Ожидалось значений: {len(columns)}, получено: {len(values)}.")
+        raise ValueError(
+            f"Ожидалось значений: {len(columns)}, получено: {len(values)}."
+        )
     row = dict(zip(columns, values))
     validate_values(schema, row)
     data = utils.load_table_data(table_name)
+    validate_table_data(schema, data)
     next_id = max((item[ID_COLUMN] for item in data), default=0) + 1
     row = {ID_COLUMN: next_id, **row}
     data.append(row)
@@ -88,7 +90,6 @@ def select(table_data, where_clause=None):
     return [row.copy() for row in table_data if matches(row, where_clause)]
 
 
-
 @handle_db_errors
 def update(table_data, set_clause, where_clause):
     """Меняет поля записей, подходящих под условие."""
@@ -108,3 +109,16 @@ def update(table_data, set_clause, where_clause):
 def delete(table_data, where_clause):
     """Возвращает записи, оставшиеся после удаления."""
     return [row.copy() for row in table_data if not matches(row, where_clause)]
+
+
+def validate_table_data(schema, data):
+    """Проверяет структуру записей, прочитанных из файла."""
+    used_ids = set()
+    for row in data:
+        if set(row) != set(schema):
+            raise ValueError("Некорректный формат файла таблицы.")
+        validate_values(schema, row)
+        row_id = row[ID_COLUMN]
+        if row_id < 1 or row_id in used_ids:
+            raise ValueError("Некорректный ID в файле таблицы.")
+        used_ids.add(row_id)

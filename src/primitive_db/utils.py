@@ -11,6 +11,8 @@ def load_metadata(filepath):
             metadata = json.load(file)
     except FileNotFoundError:
         return {}
+    except json.JSONDecodeError:
+        raise ValueError("Не удалось прочитать JSON метаданных.") from None
     if not isinstance(metadata, dict):
         raise ValueError("Некорректный формат файла метаданных.")
     return metadata
@@ -33,6 +35,8 @@ def load_table_data(table_name):
             data = json.load(file)
     except FileNotFoundError:
         return []
+    except json.JSONDecodeError:
+        raise ValueError("Не удалось прочитать JSON таблицы.") from None
     if not isinstance(data, list) or any(not isinstance(row, dict) for row in data):
         raise ValueError("Некорректный формат файла таблицы.")
     return data

@@ -3,6 +3,7 @@ import time
 
 def handle_db_errors(func):
     """Обрабатывает ошибки команд базы данных."""
+
     def wrapper(*args, **kwargs):
         try:
             return func(*args, **kwargs)
@@ -23,11 +24,10 @@ def handle_db_errors(func):
 
 def confirm_action(action_name):
     """Запрашивает подтверждение перед удалением."""
+
     def decorator(func):
         def wrapper(*args, **kwargs):
-            answer = input(
-                f'Вы уверены, что хотите выполнить "{action_name}"? [y/n]: '
-            )
+            answer = input(f'Вы уверены, что хотите выполнить "{action_name}"? [y/n]: ')
             if answer.strip().lower() != "y":
                 print("Действие отменено.")
                 return None
@@ -42,6 +42,7 @@ def confirm_action(action_name):
 
 def log_time(func):
     """Выводит время выполнения функции."""
+
     def wrapper(*args, **kwargs):
         start = time.monotonic()
         try:
@@ -53,7 +54,6 @@ def log_time(func):
     wrapper.__name__ = func.__name__
     wrapper.__doc__ = func.__doc__
     return wrapper
-
 
 
 def create_cacher():
