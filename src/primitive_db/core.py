@@ -5,7 +5,6 @@ from primitive_db.parser import validate_name
 
 
 def get_schema(metadata, table_name):
-    """Возвращает столбцы существующей таблицы."""
     validate_name(table_name)
     if table_name not in metadata:
         raise ValueError(f'Ошибка: Таблица "{table_name}" не существует.')
@@ -21,7 +20,6 @@ def get_schema(metadata, table_name):
 
 @handle_db_errors
 def create_table(metadata, table_name, columns):
-    """Добавляет новую таблицу в метаданные."""
     validate_name(table_name)
     if table_name in metadata:
         raise ValueError(f'Ошибка: Таблица "{table_name}" уже существует.')
@@ -40,14 +38,12 @@ def create_table(metadata, table_name, columns):
 @handle_db_errors
 @confirm_action("удаление таблицы")
 def drop_table(metadata, table_name):
-    """Удаляет таблицу из метаданных."""
     get_schema(metadata, table_name)
     del metadata[table_name]
     return metadata
 
 
 def validate_values(schema, values):
-    """Проверяет столбцы и типы значений."""
     for column, value in values.items():
         if column not in schema:
             raise ValueError(f'Ошибка: Столбец "{column}" не существует.')
@@ -58,7 +54,6 @@ def validate_values(schema, values):
 @handle_db_errors
 @log_time
 def insert(metadata, table_name, values):
-    """Добавляет запись с новым ID."""
     schema = get_schema(metadata, table_name)
     columns = [name for name in schema if name != ID_COLUMN]
     if len(values) != len(columns):
@@ -76,7 +71,6 @@ def insert(metadata, table_name, values):
 
 
 def matches(row, where_clause):
-    """Проверяет совпадение записи с условием."""
     return where_clause is None or all(
         row[column] == value and type(row[column]) is type(value)
         for column, value in where_clause.items()
@@ -86,13 +80,11 @@ def matches(row, where_clause):
 @handle_db_errors
 @log_time
 def select(table_data, where_clause=None):
-    """Возвращает подходящие записи."""
     return [row.copy() for row in table_data if matches(row, where_clause)]
 
 
 @handle_db_errors
 def update(table_data, set_clause, where_clause):
-    """Меняет поля записей, подходящих под условие."""
     if ID_COLUMN in set_clause:
         raise ValueError("Изменять ID нельзя.")
     result = []
@@ -107,12 +99,10 @@ def update(table_data, set_clause, where_clause):
 @handle_db_errors
 @confirm_action("удаление записей")
 def delete(table_data, where_clause):
-    """Возвращает записи, оставшиеся после удаления."""
     return [row.copy() for row in table_data if not matches(row, where_clause)]
 
 
 def validate_table_data(schema, data):
-    """Проверяет структуру записей, прочитанных из файла."""
     used_ids = set()
     for row in data:
         if set(row) != set(schema):

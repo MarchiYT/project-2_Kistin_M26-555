@@ -5,7 +5,6 @@ from primitive_db.constants import DATA_DIRECTORY
 
 
 def load_metadata(filepath):
-    """Читает структуру таблиц из JSON."""
     try:
         with open(filepath, encoding="utf-8") as file:
             metadata = json.load(file)
@@ -19,7 +18,6 @@ def load_metadata(filepath):
 
 
 def save_metadata(filepath, metadata):
-    """Сохраняет структуру таблиц."""
     temporary_path = str(filepath) + ".tmp"
     with open(temporary_path, "w", encoding="utf-8") as file:
         json.dump(metadata, file, ensure_ascii=False, indent=2)
@@ -28,7 +26,6 @@ def save_metadata(filepath, metadata):
 
 
 def load_table_data(table_name):
-    """Читает записи таблицы."""
     filepath = os.path.join(DATA_DIRECTORY, table_name + ".json")
     try:
         with open(filepath, encoding="utf-8") as file:
@@ -43,14 +40,12 @@ def load_table_data(table_name):
 
 
 def save_table_data(table_name, data):
-    """Сохраняет записи таблицы."""
     os.makedirs(DATA_DIRECTORY, exist_ok=True)
     filepath = os.path.join(DATA_DIRECTORY, table_name + ".json")
     save_metadata(filepath, data)
 
 
 def delete_table_data(table_name):
-    """Удаляет файл таблицы."""
     filepath = os.path.join(DATA_DIRECTORY, table_name + ".json")
     if os.path.exists(filepath):
         os.remove(filepath)
