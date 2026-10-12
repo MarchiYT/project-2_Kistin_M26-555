@@ -4,12 +4,14 @@ from primitive_db.constants import COLUMN_TYPES, ID_COLUMN, NAME_CHARACTERS
 
 
 def validate_name(name):
+    """Проверяет имя таблицы или столбца."""
     if not name or any(char not in NAME_CHARACTERS for char in name):
         raise ValueError(f"Некорректное имя: {name}.")
     return name
 
 
 def tokenize(text):
+    """Отделяет слова и знаки, сохраняя кавычки."""
     tokens = []
     value = ""
     quote = None
@@ -47,6 +49,7 @@ def tokenize(text):
 
 
 def parse_value(value):
+    """Определяет тип одного значения."""
     if value.startswith(('"', "'")):
         parts = shlex.split(value)
         if len(parts) == 1:
@@ -61,6 +64,7 @@ def parse_value(value):
 
 
 def parse_values(text):
+    """Разбирает значения внутри круглых скобок."""
     tokens = tokenize(text) if isinstance(text, str) else text
     if len(tokens) < 3 or tokens[0] != "(" or tokens[-1] != ")":
         raise ValueError("Некорректный список значений.")
@@ -78,6 +82,7 @@ def parse_values(text):
 
 
 def parse_assignments(tokens):
+    """Разбирает пары столбец = значение."""
     if not tokens or (len(tokens) + 1) % 4:
         raise ValueError("Некорректное условие.")
     result = {}
@@ -93,6 +98,7 @@ def parse_assignments(tokens):
 
 
 def parse_where(text):
+    """Разбирает одно условие поиска."""
     tokens = tokenize(text) if isinstance(text, str) else text
     if len(tokens) != 3:
         raise ValueError("В where нужно указать одно условие.")
@@ -100,11 +106,13 @@ def parse_where(text):
 
 
 def parse_set(text):
+    """Разбирает новые значения столбцов."""
     tokens = tokenize(text) if isinstance(text, str) else text
     return parse_assignments(tokens)
 
 
 def parse_command(text):
+    """Разбирает команду целиком."""
     tokens = tokenize(text)
     if not tokens:
         return None

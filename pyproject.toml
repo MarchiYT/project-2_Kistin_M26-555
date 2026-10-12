@@ -1,5 +1,5 @@
 [project]
-name = "primitive-db"
+name = "project-2-kistin-m26-555"
 version = "0.1.0"
 description = "Консольная база данных на JSON"
 readme = "README.md"
@@ -17,6 +17,9 @@ project = "primitive_db.main:main"
 [build-system]
 requires = ["uv_build>=0.12.24,<0.13.0"]
 build-backend = "uv_build"
+
+[tool.uv.build-backend]
+module-name = "primitive_db"
 
 [dependency-groups]
 dev = ["ruff>=0.17.0"]

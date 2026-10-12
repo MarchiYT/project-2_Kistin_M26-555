@@ -10,12 +10,14 @@ from primitive_db.parser import parse_command
 
 
 def print_help():
+    """Выводит список команд."""
     print("Доступные команды:")
     for line in HELP_LINES:
         print(line)
 
 
 def print_table(schema, data):
+    """Выводит записи в табличном виде."""
     table = PrettyTable()
     table.field_names = list(schema)
     for row in data:
@@ -25,6 +27,7 @@ def print_table(schema, data):
 
 @handle_db_errors
 def execute_command(text, cache_result):
+    """Выполняет одну команду."""
     command = parse_command(text)
     if command is None:
         return False
@@ -110,6 +113,7 @@ def execute_command(text, cache_result):
 
 
 def run():
+    """Запускает цикл ввода команд."""
     print_help()
     cache_result = create_cacher()
     while True:

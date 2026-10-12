@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="608" height="738" viewBox="0 0 608 738">
+<title>Демонстрация работы базы данных</title>
+<desc>Кадр из demo.cast: выборка, обновление записи и подтверждение удаления. Нажмите, чтобы открыть запись asciinema.</desc>
+<rect width="608" height="738" rx="6" fill="#121417"/>
+<g fill="#dde1e6" font-family="Consolas, Courier New, monospace" font-size="15" xml:space="preserve">
+<text x="16" y="26">| 1  |    Sergei    |  28 |    True   |</text>
+<text x="16" y="45">| 2  | Ivanov, Ivan |  30 |   False   |</text>
+<text x="16" y="64">+----+--------------+-----+-----------+</text>
+<text x="16" y="83">Введите команду: select from users where age = 28</text>
+<text x="16" y="102">Функция select выполнилась за 0.000 секунд.</text>
+<text x="16" y="121">+----+--------+-----+-----------+</text>
+<text x="16" y="140">| ID |  name  | age | is_active |</text>
+<text x="16" y="159">+----+--------+-----+-----------+</text>
+<text x="16" y="178">| 1  | Sergei |  28 |    True   |</text>
+<text x="16" y="197">+----+--------+-----+-----------+</text>
+<text x="16" y="216">Введите команду: update users set age = 29 where name = &quot;Sergei&quot;</text>
+<text x="16" y="235">Запись с ID=1 в таблице &quot;users&quot; успешно обновлена.</text>
+<text x="16" y="254">Введите команду: select from users where ID = 1</text>
+<text x="16" y="273">Функция select выполнилась за 0.000 секунд.</text>
+<text x="16" y="292">+----+--------+-----+-----------+</text>
+<text x="16" y="311">| ID |  name  | age | is_active |</text>
+<text x="16" y="330">+----+--------+-----+-----------+</text>
+<text x="16" y="349">| 1  | Sergei |  29 |    True   |</text>
+<text x="16" y="368">+----+--------+-----+-----------+</text>
+<text x="16" y="387">Введите команду: info users</text>
+<text x="16" y="406">Таблица: users</text>
+<text x="16" y="425">Столбцы: ID:int, name:str, age:int, is_active:bool</text>
+<text x="16" y="444">Количество записей: 2</text>
+<text x="16" y="463">Введите команду: delete from users where ID = 2</text>
+<text x="16" y="482">Вы уверены, что хотите выполнить &quot;удаление записей&quot;? [y/n]: n</text>
+<text x="16" y="501">Действие отменено.</text>
+<text x="16" y="520">Введите команду: select from users</text>
+<text x="16" y="539">Функция select выполнилась за 0.000 секунд.</text>
+<text x="16" y="558">+----+--------------+-----+-----------+</text>
+<text x="16" y="577">| ID |     name     | age | is_active |</text>
+<text x="16" y="596">+----+--------------+-----+-----------+</text>
+<text x="16" y="615">| 1  |    Sergei    |  29 |    True   |</text>
+<text x="16" y="634">| 2  | Ivanov, Ivan |  30 |   False   |</text>
+<text x="16" y="653">+----+--------------+-----+-----------+</text>
+</g>
+<line x1="16" y1="679" x2="592" y2="679" stroke="#3a4047"/>
+<path d="M 22 697 L 22 717 L 39 707 Z" fill="#dde1e6"/>
+<text x="52" y="713" fill="#dde1e6" font-family="Arial, sans-serif" font-size="16">Смотреть запись — 2:27</text>
+</svg>
